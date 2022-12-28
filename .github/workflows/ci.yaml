@@ -22,21 +22,30 @@ jobs:
       image: archlinux:latest
     steps:
     - uses: actions/checkout@v3
-    - name: Install
+    - name: Check out repo under workspace
+      uses: actions/checkout@v3
+
+    - name: Create image tag
+      id: imagetag
       run: |
-        sed -i 's/^#Server/Server/' /etc/pacman.d/mirrorlist
-        sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
-        pacman -Sy --noconfirm
-        pacman -S git --noconfirm
-        curl -fsSL https://git.io/shellspec | sh -s -- --yes
-        pacman -S firefox chromium diffutils --noconfirm
-        pacman -S dash zsh --noconfirm
-    - name: Run shellspec for bash
-      run:
-        /github/home/.local/bin/shellspec -s /bin/sh
-    - name: Run shellspec for dash
-      run:
-        /github/home/.local/bin/shellspec -s /bin/dash
-    - name: Run shellspec for zsh
-      run:
-        /github/home/.local/bin/shellspec -s /bin/zsh
+        TAG="arch-shellspec-$(date +%Y%U)"
+        PATH="/tmp/docker/${TAG}.tar"
+        echo "::set-output name=TAG::${TAG}"
+        echo "::set-output name=PATH::${PATH}"
+
+    - name: Enable cache
+      id: cache
+      uses: actions/cache@v2
+      with:
+        path: /tmp/docker
+        key: ${{ steps.imagetag.outputs.TAG }}
+
+    - name: Load Docker image if exists
+      if: steps.cache.outputs.cache-hit == 'true'
+      run: docker load --input ${{ steps.imagetag.outputs.PATH }}
+
+    - name: Build Docker image and save
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: |
+        docker build -f '${{ github.workspace }}/.github/workflows/Dockerfile' -t ${{ steps.imagetag.outputs.TAG }} .
+        docker save --output ${{ steps.imagetag.outputs.PATH }} ${{ steps.imagetag.outputs.TAG }}
