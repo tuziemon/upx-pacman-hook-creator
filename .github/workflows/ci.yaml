@@ -24,6 +24,8 @@ jobs:
     - uses: actions/checkout@v3
     - name: Install
       run: |
+        sed -i 's/^#Server/Server/' /etc/pacman.d/mirrorlist
+        sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
         pacman -Sy --noconfirm
         pacman -S git --noconfirm
         curl -fsSL https://git.io/shellspec | sh -s -- --yes
