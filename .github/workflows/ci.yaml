@@ -28,6 +28,13 @@ jobs:
         pacman -S git --noconfirm
         curl -fsSL https://git.io/shellspec | sh -s -- --yes
         pacman -S firefox chromium diffutils --noconfirm
-    - name: Run shellspec
-      run: |
-        /github/home/.local/bin/shellspec
+        pacman -S dash zsh --noconfirm
+    - name: Run shellspec for bash
+      run:
+        /github/home/.local/bin/shellspec -s /bin/sh
+    - name: Run shellspec for dash
+      run:
+        /github/home/.local/bin/shellspec -s /bin/dash
+    - name: Run shellspec for zsh
+      run:
+        /github/home/.local/bin/shellspec -s /bin/zsh
