@@ -44,5 +44,6 @@ jobs:
     - name: Build Docker image and save
       if: steps.cache.outputs.cache-hit != 'true'
       run: |
+        mkdir -p /tmp/docker
         docker build -f '${{ github.workspace }}/.github/workflows/Dockerfile' -t ${{ steps.imagetag.outputs.TAG }} .
         docker save --output ${{ steps.imagetag.outputs.PATH }} ${{ steps.imagetag.outputs.TAG }}
