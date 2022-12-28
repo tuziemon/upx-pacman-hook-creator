@@ -32,6 +32,17 @@ check_binary_format() {
   fi
 }
 
+select_compressible_file() {
+  for e in $(query_installed_file_list "$1")
+  do
+    if test $(check_binary_format "${e}") -eq 0 && test $(check_filesize "${e}") -eq 0; then
+      ret="${ret} ${e}"
+    fi
+  done
+
+  echo "${ret}"
+}
+
 create_hook() {
   output_hook="$1"
   compress_bin_list="$2"
