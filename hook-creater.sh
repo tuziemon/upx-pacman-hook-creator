@@ -45,7 +45,8 @@ select_compressible_file() {
 
 create_hook() {
   output_hook="$1"
-  compress_bin_list="$2"
+  package_name="$2"
+  compress_bin_list=$(select_compressible_file "${package_name}")
 
 
 
@@ -57,15 +58,16 @@ Operation = Upgrade
 EOF
   for e in $compress_bin_list
   do
-    echo "Target = $e" >> "$output_hook"
+    echo "Target = ${e#/}" >> "$output_hook"
   done
 
   cat << EOF >> "$output_hook"
+
 [Action]
 Depends = upx
-Description = Packing binary to UPX...
+Description = Packing ${package_name} binary to UPX...
 When = PostTransaction
-Exec = /usr/sbin/upx $compress_bin_list
+Exec = /usr/sbin/upx ${compress_bin_list# }
 NeedsTargets
 EOF
 }
