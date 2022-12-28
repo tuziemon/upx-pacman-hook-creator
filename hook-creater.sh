@@ -1,5 +1,16 @@
 #!/bin/sh
 
+check_filesize() {
+    du_info=$(du -sh $1)
+    file_size="${du_info%%[[:space:]]*}"
+
+    if test "${file_size#*M}" != "$file_size"; then
+        echo 0
+    else
+        echo 1
+    fi
+}
+
 query_installed_file_list() {
   for e in $(pacman -Qlq "$1" | xargs)
   do
