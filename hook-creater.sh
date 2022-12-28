@@ -32,3 +32,5 @@ Exec = /usr/sbin/upx ${compress_bin_list# }
 NeedsTargets
 EOF
 }
+
+create_hook "$1" "$2"
