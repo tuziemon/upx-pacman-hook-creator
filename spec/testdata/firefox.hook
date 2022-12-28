@@ -1,0 +1,12 @@
+[Trigger]
+Type = Path
+Operation = Install
+Operation = Upgrade
+Target = usr/lib/firefox/minidump-analyzer
+
+[Action]
+Depends = upx
+Description = Packing firefox binary to UPX...
+When = PostTransaction
+Exec = /usr/sbin/upx /usr/lib/firefox/minidump-analyzer
+NeedsTargets
