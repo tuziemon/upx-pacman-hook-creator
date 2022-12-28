@@ -31,3 +31,30 @@ check_binary_format() {
     echo 1
   fi
 }
+
+create_hook() {
+  output_hook="$1"
+  compress_bin_list="$2"
+
+
+
+  cat << EOF > "$output_hook"
+[Trigger]
+Type = Path
+Operation = Install
+Operation = Upgrade
+EOF
+  for e in $compress_bin_list
+  do
+    echo "Target = $e" >> "$output_hook"
+  done
+
+  cat << EOF >> "$output_hook"
+[Action]
+Depends = upx
+Description = Packing binary to UPX...
+When = PostTransaction
+Exec = /usr/sbin/upx $compress_bin_list
+NeedsTargets
+EOF
+}
