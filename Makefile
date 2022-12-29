@@ -15,7 +15,7 @@ devel:
 .PHONY: test
 test:
 	$(DOCKER) run -itd -w /mnt/ -v $(MOUNT_DIR):/mnt --name $(CONTAINER_NAME) $(TAG_NAME) /bin/bash
-	$(DOCKER) exec -w /mnt/ $(CONTAINER_NAME) /bin/bash -c "/root/.local/bin/shellspec -s /bin/bash"
-	$(DOCKER) exec -w /mnt/ $(CONTAINER_NAME) /bin/bash -c "/root/.local/bin/shellspec -s /bin/zsh"
-	$(DOCKER) exec -w /mnt/ $(CONTAINER_NAME) /bin/bash -c "/root/.local/bin/shellspec -s /bin/dash"
+	($(DOCKER) exec -w /mnt/ $(CONTAINER_NAME) /bin/bash -c "/root/.local/bin/shellspec -s /bin/bash" && \
+	$(DOCKER) exec -w /mnt/ $(CONTAINER_NAME) /bin/bash -c "/root/.local/bin/shellspec -s /bin/zsh"  && \
+	$(DOCKER) exec -w /mnt/ $(CONTAINER_NAME) /bin/bash -c "/root/.local/bin/shellspec -s /bin/dash" && /bin/false ) || \
 	$(DOCKER) rm -f $(CONTAINER_NAME)
