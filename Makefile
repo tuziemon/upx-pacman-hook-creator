@@ -19,5 +19,3 @@ test:
 	$(DOCKER) exec -w /mnt/ $(CONTAINER_NAME) /bin/bash -c "/root/.local/bin/shellspec -s /bin/zsh"
 	$(DOCKER) exec -w /mnt/ $(CONTAINER_NAME) /bin/bash -c "/root/.local/bin/shellspec -s /bin/dash"
 	$(DOCKER) rm -f $(CONTAINER_NAME)
-#	 $(DOCKER) run --rm -w /mnt/ -v $(MOUNT_DIR):/mnt --name $(CONTAINER_NAME) $(TAG_NAME) /bin/bash -c "/root/.local/bin/shellspec -s /bin/dash"
-#	 $(DOCKER) run --rm -w /mnt/ -v $(MOUNT_DIR):/mnt --name $(CONTAINER_NAME) $(TAG_NAME) /bin/bash -c "/root/.local/bin/shellspec -s /bin/zsh"
