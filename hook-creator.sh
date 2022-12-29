@@ -5,23 +5,29 @@ select_compressible_file() {
 }
 
 create_hook() {
-  output_hook="$1"
-  package_name="$2"
-  threshold="$3"
+  package_name="$1"
+  threshold="$2"
   compress_bin_list=$(select_compressible_file "${package_name}" "${threshold}")
 
-  cat << EOF > "$output_hook"
+  ret=$(cat << EOS
 [Trigger]
 Type = Path
 Operation = Install
 Operation = Upgrade
-EOF
+EOS
+     )
+
   for e in $compress_bin_list
   do
-    echo "Target = ${e#/}" >> "$output_hook"
+    ret="${ret}$( cat << EOS
+
+Target = ${e#/}
+EOS
+          )"
   done
 
-  cat << EOF >> "$output_hook"
+    ret="${ret}$( cat << EOS
+
 
 [Action]
 Depends = upx
@@ -29,7 +35,14 @@ Description = Packing ${package_name} binary to UPX...
 When = PostTransaction
 Exec = /usr/sbin/upx ${compress_bin_list# }
 NeedsTargets
-EOF
+EOS
+       )"
+
+  echo "${ret}"
+}
+
+needsu() {
+  "$@" > /dev/null 2>&1 || sudo "$@"
 }
 
 usage() {
@@ -64,7 +77,7 @@ main() {
     usage
     exit 1
   fi
-
+  
   if [ -n "$save" ]; then
     mkdir -p /opt/upx-packer 2> /dev/null || sudo mkdir -p /opt/upx-packer
     touch /opt/upx-packer/upx-packer.conf 2> /dev/null || sudo touch /opt/upx-packer/upx-packer.conf
@@ -72,7 +85,8 @@ main() {
     sh -c "echo "threshold.$package_name=$threshold" | sudo tee -a /opt/upx-packer/upx-packer.conf > /dev/null 2>&1"
   fi
 
-  create_hook "$output" "$package_name" "$threshold"
+  needsu mkdir -p /opt/upx-packer/hooks
+  create_hook "$package_name" "$threshold" | needsu tee /opt/upx-packer/hooks/"${output}" > /dev/null
 }
 
 main "$@"

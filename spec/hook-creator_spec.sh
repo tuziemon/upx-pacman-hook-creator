@@ -17,12 +17,12 @@ Options:
 
   Describe 'normal'
     Parameters
-      -o /tmp/test.hook -p firefox -t 1M spec/testdata/hook/firefox.hook ""
-      -o /tmp/test.hook -p chromium -t 1M spec/testdata/hook/chromium.hook ""
+      -o test.hook -p firefox -t 1M spec/testdata/firefox.hook ""
+      -o test.hook -p chromium -t 1M spec/testdata/chromium.hook ""
     End
 
     Example "hook-creator -o param -t param -p param"
-      When call ./hook-creator.sh "$1" "$2" "$3" "$4" "$5" "$6" && diff "$2" "$7"
+      When call ./hook-creator.sh "$1" "$2" "$3" "$4" "$5" "$6" && diff /opt/upx-packer/hooks/"$2" "$7"
       The output should eq "$8"
       The status should be success
     End
@@ -30,11 +30,11 @@ Options:
 
   Describe 'missing parameter'
     Parameters
-      -o /tmp/test.hook "" "" "" "" ""
+      -o test.hook "" "" "" "" ""
       -p firefox "" "" "" "" ""
       -t 1M "" "" "" "" ""
-      -o /tmp/test.hook -p firefox "" "" ""
-      -o /tmp/test.hook -t 1M "" "" ""
+      -o test.hook -p firefox "" "" ""
+      -o test.hook -t 1M "" "" ""
       -p firefox -o /tmp/test.hook "" "" ""
       -p firefox -t 1M "" "" ""
       -t 1M -o /tmp/test.hook "" "" ""
@@ -51,7 +51,7 @@ Options:
 
   Describe 'invalid parameter'
     Parameters
-      -z /tmp/test.hook "" "" "" "" ""
+      -z test.hook "" "" "" "" ""
       -x firefox "" "" "" "" ""
     End
 
@@ -81,6 +81,26 @@ Options:
     Example "hook-creator missing param"
       When call ./hook-creator.sh "$1" "$2" "$3" "$4" "$5" "$6" "$7" && diff "$8" /opt/upx-packer/upx-packer.conf
       The output should eq "$9"
+    End
+  End
+
+  Describe 'pacman hook'
+    cleanup() {
+      rm /opt/upx-packer/hooks/*
+      pacman -Sdd firefox gnome-text-editor --noconfirm > /dev/null 2>&1
+    }
+
+    AfterAll 'cleanup'
+
+    Parameters
+      -o firefox.hook -p firefox -t 50000 firefox
+      -o gnome-text-editor.hook -p gnome-text-editor -t 50000 gnome-text-editor
+    End
+
+    Example "executing as pacman hook"
+      ./hook-creator.sh "$1" "$2" "$3" "$4" "$5" "$6"
+      When call sh -c "pacman -Sdd $7 --noconfirm 2> /dev/null"
+      The output should include "Packing $7 binary to UPX..."
       The status should be success
     End
   End
