@@ -19,14 +19,14 @@ EOS
 
   for e in $compress_bin_list
   do
-    ret="${ret} $( cat << EOS
+    ret="${ret}$( cat << EOS
 
 Target = ${e#/}
 EOS
           )"
   done
 
-    ret="${ret} $( cat << EOS
+    ret="${ret}$( cat << EOS
 
 
 [Action]
@@ -76,8 +76,8 @@ main() {
     exit 1
   fi
 
-  mkdir -p /opt/upx-packer/hooks
-  create_hook "$package_name" "$threshold" | sudo tee /opt/upx-packer/hooks/"${output}" > /dev/null
+  needsu mkdir -p /opt/upx-packer/hooks
+  create_hook "$package_name" "$threshold" | needsu tee /opt/upx-packer/hooks/"${output}" > /dev/null
 }
 
 main "$@"
