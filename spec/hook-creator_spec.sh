@@ -62,4 +62,17 @@ Options:
     End
   End
 
+  Describe 'pacman hook'
+    Parameters
+      -o firefox.hook -p firefox -t 10000 firefox
+    End
+
+    Example "executing as pacman hook"
+      #./hook-creator.sh "$1" "$2" "$3" "$4" "$5" "$6"
+      When call sudo pacman -Sdd "$7" --noconfirm 2> /dev/null
+      The stdout should include "Packing $7 binary to UPX..."
+      The status should be success
+    End
+  End
+
 End

@@ -42,7 +42,7 @@ EOS
 }
 
 needsu() {
-  $@ > /dev/null 2>&1 || sudo $@
+  "$@" > /dev/null 2>&1 || sudo "$@"
 }
 
 usage() {
@@ -76,8 +76,8 @@ main() {
     exit 1
   fi
 
-  needsu mkdir -p /test
-  create_hook "$package_name" "$threshold" | needsu tee /opt/upx-packer/hooks/"${output}" > /dev/null
+  mkdir -p /opt/upx-packer/hooks
+  create_hook "$package_name" "$threshold" | sudo tee /opt/upx-packer/hooks/"${output}" > /dev/null
 }
 
 main "$@"
