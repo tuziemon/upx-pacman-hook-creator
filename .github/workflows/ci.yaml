@@ -47,13 +47,16 @@ jobs:
         mkdir -p /tmp/docker
         docker build -f '${{ github.workspace }}/.github/workflows/Dockerfile' -t ${{ steps.imagetag.outputs.TAG }} .
         docker save --output ${{ steps.imagetag.outputs.PATH }} ${{ steps.imagetag.outputs.TAG }}
-
+        
+    - name: Start docker container
+      run:
+        docker run -dit --init -v ${{ github.workspace }}:/mnt --name test-runner ${{ steps.imagetag.outputs.TAG }} /bin/dash
     - name: Run shellspec for bash
       run:
-        docker run -v ${{ github.workspace }}:/mnt ${{ steps.imagetag.outputs.TAG }} "cd /mnt/; /root/.local/bin/shellspec -s /bin/sh"
+        docker exec test-runner /bin/dash -c "cd /mnt/; /root/.local/bin/shellspec -s /bin/sh"
     - name: Run shellspec for dash
       run:
-        docker run -v ${{ github.workspace }}:/mnt ${{ steps.imagetag.outputs.TAG }} "cd /mnt/; /root/.local/bin/shellspec -s /bin/dash"
+        docker exec test-runner /bin/dash -c "cd /mnt/; /root/.local/bin/shellspec -s /bin/dash"
     - name: Run shellspec for zsh
       run:
-        docker run -v ${{ github.workspace }}:/mnt ${{ steps.imagetag.outputs.TAG }} "cd /mnt/; /root/.local/bin/shellspec -s /bin/zsh"
+        docker exec test-runner /bin/dash -c "cd /mnt/; /root/.local/bin/shellspec -s /bin/zsh"
