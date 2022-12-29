@@ -65,14 +65,14 @@ Options:
   Describe 'pacman hook'
     cleanup() {
       rm /opt/upx-packer/hooks/*
-      pacman -Sdd firefox chromium --noconfirm > /dev/null 2>&1
+      pacman -Sdd firefox gnome-text-editor --noconfirm > /dev/null 2>&1
     }
 
     AfterAll 'cleanup'
 
     Parameters
-      -o firefox.hook -p firefox -t 10000 firefox
-      -o chromium.hook -p chromium -t 10000 chromium
+      -o firefox.hook -p firefox -t 50000 firefox
+      -o gnome-text-editor.hook -p gnome-text-editor -t 50000 gnome-text-editor
     End
 
     Example "executing as pacman hook"
