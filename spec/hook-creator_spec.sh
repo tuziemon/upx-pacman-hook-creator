@@ -67,8 +67,8 @@ Options:
     cleanup() {
       touch /tmp/test.hook
       rm -rf /tmp/test.hook
-      sudo touch /opt/upx-packer/upx-packer.conf
-      sudo rm /opt/upx-packer/upx-packer.conf
+      touch /opt/upx-packer/upx-packer.conf 2> /dev/null || sudo touch /opt/upx-packer/upx-packer.conf
+      rm /opt/upx-packer/upx-packer.conf 2> /dev/null || sudo rm /opt/upx-packer/upx-packer.conf
     }
     AfterAll 'cleanup'
 
@@ -80,7 +80,7 @@ Options:
 
     Example "hook-creator missing param"
       When call ./hook-creator.sh "$1" "$2" "$3" "$4" "$5" "$6" "$7" && diff "$8" /opt/upx-packer/upx-packer.conf
-      The stdout should eq "$9"
+      The output should eq "$9"
       The status should be success
     End
   End
