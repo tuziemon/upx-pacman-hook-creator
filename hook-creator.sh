@@ -1,15 +1,14 @@
 #!/bin/sh
 
 select_compressible_file() {
-  pacman -Qlq "$1" | xargs file -F ' ' | grep executable | cut -d' ' -f1 | xargs -n 1 du -h --threshold=1M | cut -f2 | xargs
+  pacman -Qlq "$1" | xargs file -F ' ' | grep executable | cut -d' ' -f1 | xargs -n 1 du -h --threshold="$2" | cut -f2 | xargs
 }
 
 create_hook() {
   output_hook="$1"
   package_name="$2"
-  compress_bin_list=$(select_compressible_file "${package_name}")
-
-
+  threshold="$3"
+  compress_bin_list=$(select_compressible_file "${package_name}" "${threshold}")
 
   cat << EOF > "$output_hook"
 [Trigger]
@@ -33,4 +32,38 @@ NeedsTargets
 EOF
 }
 
-create_hook "$1" "$2"
+usage() {
+  cat <<EOUSAGE
+-----------------------------------------------------------------------
+Usage: $0 [< options >]
+
+Options:
+-o output_hook : Output hook filename.
+-p package_name : Compress package name.
+-t binary threshold : Compress binary if greater than this parameter.
+-----------------------------------------------------------------------
+EOUSAGE
+}
+
+main() {
+  while getopts o:p:t: flag
+  do
+    case "${flag}" in
+      o) output=${OPTARG};;
+      p) package_name=${OPTARG};;
+      t) threshold=${OPTARG};;
+      *) usage
+         exit 1;
+    esac
+  done
+
+  if [ -z "$output" ] || [ -z "$package_name" ] || [ -z "$threshold" ]; then
+    echo "Missing -o or -p or -t" >&2
+    usage
+    exit 1
+  fi
+
+  create_hook "$output" "$package_name" "$threshold"
+}
+
+main "$@"
