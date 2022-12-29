@@ -69,7 +69,7 @@ Options:
 
     Example "executing as pacman hook"
       #./hook-creator.sh "$1" "$2" "$3" "$4" "$5" "$6"
-      When call sudo pacman -Sdd "$7" --noconfirm 2> /dev/null
+      When call pacman -Sdd "$7" --noconfirm 2> /dev/null
       The stdout should include "Packing $7 binary to UPX..."
       The status should be success
     End
