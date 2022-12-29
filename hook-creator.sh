@@ -54,17 +54,19 @@ Options:
 -o output_hook : Output hook filename.
 -p package_name : Compress package name.
 -t binary_threshold : Compress binary if greater than this parameter.
+-s save: Save binary threshold to /opt/upx-packer/upx-packer.conf.
 -----------------------------------------------------------------------
 EOUSAGE
 }
 
 main() {
-  while getopts o:p:t: flag
+  while getopts o:p:t:s flag
   do
     case "${flag}" in
       o) output=${OPTARG};;
       p) package_name=${OPTARG};;
       t) threshold=${OPTARG};;
+      s) save=1;;
       *) usage
          exit 1;
     esac
@@ -74,6 +76,13 @@ main() {
     echo "Missing -o or -p or -t" >&2
     usage
     exit 1
+  fi
+  
+  if [ -n "$save" ]; then
+    mkdir -p /opt/upx-packer 2> /dev/null || sudo mkdir -p /opt/upx-packer
+    touch /opt/upx-packer/upx-packer.conf 2> /dev/null || sudo touch /opt/upx-packer/upx-packer.conf
+    sh -c "echo "threshold.$package_name=$threshold" | tee -a /opt/upx-packer/upx-packer.conf > /dev/null 2>&1" || \
+    sh -c "echo "threshold.$package_name=$threshold" | sudo tee -a /opt/upx-packer/upx-packer.conf > /dev/null 2>&1"
   fi
 
   needsu mkdir -p /opt/upx-packer/hooks
