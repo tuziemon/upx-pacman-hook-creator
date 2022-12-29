@@ -68,8 +68,8 @@ main() {
   if [ -n "$save" ]; then
     mkdir -p /opt/upx-packer 2> /dev/null || sudo mkdir -p /opt/upx-packer
     touch /opt/upx-packer/upx-packer.conf 2> /dev/null || sudo touch /opt/upx-packer/upx-packer.conf
-    echo "threshold.$package_name=$threshold" | sudo tee -a /opt/upx-packer/upx-packer.conf > /dev/null 2>&1
-    echo "threshold.$package_name=$threshold" | tee -a /opt/upx-packer/upx-packer.conf > /dev/null 2>&1
+    sh -c "echo "threshold.$package_name=$threshold" | tee -a /opt/upx-packer/upx-packer.conf > /dev/null 2>&1" || \
+    sh -c "echo "threshold.$package_name=$threshold" | sudo tee -a /opt/upx-packer/upx-packer.conf > /dev/null 2>&1"
   fi
 
   create_hook "$output" "$package_name" "$threshold"
