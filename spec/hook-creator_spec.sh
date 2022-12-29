@@ -6,7 +6,7 @@ Usage: ./hook-creator.sh [< options >]
 Options:
 -o output_hook : Output hook filename.
 -p package_name : Compress package name.
--t binary threshold : Compress binary if greater than this parameter.
+-t binary_threshold : Compress binary if greater than this parameter.
 -----------------------------------------------------------------------"
     missing_required_param="Missing -o or -p or -t"
     invalid_param="./hook-creator.sh: illegal option -- "
