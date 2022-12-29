@@ -7,6 +7,6 @@ FROM archlinux:latest AS runtime-image
 COPY --from=compile-image /root/.local /root/.local
 RUN pacman -Sy --noconfirm && \
     pacman -S dash zsh diffutils --noconfirm && \
-    pacman -Sdd firefox chromium --noconfirm && \
+    pacman -Sdd firefox chromium gnome-text-editor --noconfirm && \
     yes | pacman -Scc
 ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
